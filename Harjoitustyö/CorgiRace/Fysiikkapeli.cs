@@ -62,6 +62,8 @@ public class CorgiRace : PhysicsGame
                 pelaajan2Pisteet.AddValue(+1);
             }
         }
+        
+        //if()
 
         Level.CreateBorders();
         Camera.ZoomToLevel();
@@ -71,16 +73,16 @@ public class CorgiRace : PhysicsGame
     }
 
 
-     /// <summary>
-     /// Luo pelaajan
-     /// 
-     /// </summary>
-     /// <param name="paikka">pelaajan aloituspaikka</param>
-     /// <param name="leveys">pelaajan hahmon leveys</param>
-     /// <param name="korkeus">pelaajan hahmon korkeus</param>
-     /// <param name="kuva">pelaajan kuva</param>
-     /// <returns>Palauttaa pelaajan perusteet</returns>
-   private PhysicsObject LuoPelaaja(Vector paikka, double leveys, double korkeus, Image kuva)
+    /// <summary>
+    /// Luo pelaajan
+    /// 
+    /// </summary>
+    /// <param name="paikka">pelaajan aloituspaikka</param>
+    /// <param name="leveys">pelaajan hahmon leveys</param>
+    /// <param name="korkeus">pelaajan hahmon korkeus</param>
+    /// <param name="kuva">pelaajan kuva</param>
+    /// <returns>Palauttaa pelaajan perusteet</returns>
+    private PhysicsObject LuoPelaaja(Vector paikka, double leveys, double korkeus, Image kuva)
     {
         PhysicsObject koiro = new PhysicsObject(leveys, korkeus);
         koiro.Position = paikka;
@@ -93,7 +95,7 @@ public class CorgiRace : PhysicsGame
         Add(koiro);
         return koiro;
 
-        
+
         void Tormaa(PhysicsObject koiro, PhysicsObject kohde)
         {
             if (kohde.Tag.Equals("pelaaja"))
@@ -101,6 +103,10 @@ public class CorgiRace : PhysicsGame
                 Explosion rajahdys = new Explosion(kohde.Width);
                 rajahdys.Position = kohde.Position;
                 Add(rajahdys);
+                for (int i =0; i==10; i++)
+                {
+                 
+                }
             }
             if (kohde.Tag.Equals("pallo"))
             {
@@ -150,10 +156,10 @@ public class CorgiRace : PhysicsGame
         pallo.Image = LoadImage("pallo");
         pallo.MakeStatic();
         pallo.Tag = "pallo";
-        Add(pallo);    
+        Add(pallo);
     }
-    
-    
+
+
     /// <summary>
     /// Luo pelikentälle lattiapaloja
     /// </summary>
@@ -174,28 +180,28 @@ public class CorgiRace : PhysicsGame
     /// <summary>
     /// Luo pelaajien ohjaimet sekä "ohje" ja "lopetus" näppäimet
     /// </summary>
-   void AsetaOhjaimet()
+    void AsetaOhjaimet()
     {
-         Keyboard.Listen(Key.W, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa ylös", koiro1, nopeusYlos);
-         Keyboard.Listen(Key.W, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
-         Keyboard.Listen(Key.S, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa alas", koiro1, nopeusAlas);
-         Keyboard.Listen(Key.S, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
-         Keyboard.Listen(Key.A, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa vasemmalle", koiro1, nopeusVas);
-         Keyboard.Listen(Key.A, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
-         Keyboard.Listen(Key.D, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa oikealle", koiro1, nopeusOik);
-         Keyboard.Listen(Key.D, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
+        Keyboard.Listen(Key.W, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa ylös", koiro1, nopeusYlos);
+        Keyboard.Listen(Key.W, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
+        Keyboard.Listen(Key.S, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa alas", koiro1, nopeusAlas);
+        Keyboard.Listen(Key.S, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
+        Keyboard.Listen(Key.A, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa vasemmalle", koiro1, nopeusVas);
+        Keyboard.Listen(Key.A, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
+        Keyboard.Listen(Key.D, ButtonState.Down, AsetaNopeus, "Pelaaja 1: Liikuta koiraa oikealle", koiro1, nopeusOik);
+        Keyboard.Listen(Key.D, ButtonState.Released, AsetaNopeus, null, koiro1, Vector.Zero);
 
-         Keyboard.Listen(Key.Up, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa ylös", koiro2, nopeusYlos);
-         Keyboard.Listen(Key.Up, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
-         Keyboard.Listen(Key.Down, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa alas", koiro2, nopeusAlas);
-         Keyboard.Listen(Key.Down, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
-         Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa vasemmalle", koiro2, nopeusVas);
-         Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
-         Keyboard.Listen(Key.Right, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa oikealle", koiro2, nopeusOik);
-         Keyboard.Listen(Key.Right, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
-     
-         Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä ohjeet");       
-         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");   
+        Keyboard.Listen(Key.Up, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa ylös", koiro2, nopeusYlos);
+        Keyboard.Listen(Key.Up, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
+        Keyboard.Listen(Key.Down, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa alas", koiro2, nopeusAlas);
+        Keyboard.Listen(Key.Down, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
+        Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa vasemmalle", koiro2, nopeusVas);
+        Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
+        Keyboard.Listen(Key.Right, ButtonState.Down, AsetaNopeus, "Pelaaja 2: Liikuta koiraa oikealle", koiro2, nopeusOik);
+        Keyboard.Listen(Key.Right, ButtonState.Released, AsetaNopeus, null, koiro2, Vector.Zero);
+
+        Keyboard.Listen(Key.F1, ButtonState.Pressed, ShowControlHelp, "Näytä ohjeet");
+        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopeta peli");
     }
 
 
@@ -226,9 +232,9 @@ public class CorgiRace : PhysicsGame
     /// </summary>
     void LisaaLaskurit()
     {
-     pelaajan1Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - laskurinKorkeus);
-     pelaajan2Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 13*laskurinKorkeus);
-     laskuri = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 7* laskurinKorkeus);
+        pelaajan1Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - laskurinKorkeus);
+        pelaajan2Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 13 * laskurinKorkeus);
+        laskuri = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 7 * laskurinKorkeus);
     }
 
 
@@ -240,20 +246,20 @@ public class CorgiRace : PhysicsGame
     /// <returns></returns>
     IntMeter LuoPisteLaskuri(double x, double y)
     {
-     IntMeter pistelaskuri = new IntMeter(0);
-     pistelaskuri.MaxValue = maksimiTormaukset;
-     pistelaskuri.UpperLimit += PeliLoppui;
-        
-     Label naytto = new Label();
-     naytto.BindTo(pistelaskuri);
-     naytto.X = x;
-     naytto.Y = y;
-     naytto.TextColor = Color.Black;
-     naytto.BorderColor = Color.Gray;
-     naytto.Color = Color.Gray;
-     Add(naytto);
+        IntMeter pistelaskuri = new IntMeter(0);
+        pistelaskuri.MaxValue = maksimiTormaukset;
+        pistelaskuri.UpperLimit += PeliLoppui;
 
-     return pistelaskuri;
+        Label naytto = new Label();
+        naytto.BindTo(pistelaskuri);
+        naytto.X = x;
+        naytto.Y = y;
+        naytto.TextColor = Color.Black;
+        naytto.BorderColor = Color.Gray;
+        naytto.Color = Color.Gray;
+        Add(naytto);
+
+        return pistelaskuri;
     }
 
 
@@ -273,19 +279,19 @@ public class CorgiRace : PhysicsGame
         topLista,
         Suurempi()
         );
-    Add(topIkkuna);
+        Add(topIkkuna);
 
-    topIkkuna.Closed += delegate (Window ikkuna)
-            {
-                DataStorage.Save<ScoreList>(topLista, "pisteet.xml");
-            };
+        topIkkuna.Closed += delegate (Window ikkuna)
+                {
+                    DataStorage.Save<ScoreList>(topLista, "pisteet.xml");
+                };
 
-    topIkkuna.Closed += delegate (Window ikkuna)
-            {
-                MessageDisplay.Add("Aloita uusi peli");
-            };
+        topIkkuna.Closed += delegate (Window ikkuna)
+                {
+                    MessageDisplay.Add("Aloita uusi peli");
+                };
     }
-    
+
 
     /// <summary>
     /// Kertoo pelin lopettavalle aliohjelmalle kumpi pelaajista voittaa. Tasapelissä kumpikaan ei voita.
@@ -294,7 +300,7 @@ public class CorgiRace : PhysicsGame
     public int Suurempi()
     {
         if (pelaajan1Pisteet.Value > pelaajan2Pisteet.Value) return pelaajan1Pisteet;
-        return pelaajan2Pisteet; 
+        return pelaajan2Pisteet;
     }
 
 
