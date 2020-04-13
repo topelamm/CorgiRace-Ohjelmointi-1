@@ -10,13 +10,14 @@ using Jypeli.Widgets;
 /// <summary>
 /// Koirat keräävät kilpaa palloja
 /// </summary>
+
+
 public class CorgiRace : PhysicsGame
 {
     Vector nopeusYlos = new Vector(0, 200);
     Vector nopeusAlas = new Vector(0, -200);
     Vector nopeusOik = new Vector(200, 0);
     Vector nopeusVas = new Vector(-200, 0);
-
     Vector aloitus1 = new Vector(-800, 400);
     Vector aloitus2 = new Vector(-800, -400);
 
@@ -29,19 +30,25 @@ public class CorgiRace : PhysicsGame
 
     const int maksimiTormaukset = 11;
     const int laskurinPaikka = 50;
-    const int laskurinKorkeus = 50;
     const int listanPituus = 10;
     const int listalleMinPisteet = 0;
     const int koironKoko = 150;
+    const int lattianKoko = 50;
+    const int aitojenMaara = 10;
+    const int pisteitäPallosta = 1;
+    const double sijaintiMin = 500.0;
+    const double sijaintiMax = 550.0;
+
+
     public override void Begin()
     {
         SetWindowSize(1280, 720);
         Level.Background.Image = LoadImage("Tausta");
 
         TileMap kentta = TileMap.FromLevelAsset("kentta");
-        kentta.SetTileMethod('x', LuoLattia);
-        kentta.SetTileMethod('t', LuoPallo);
-        kentta.Execute(50, 50);
+        kentta.SetTileMethod('x', LuoObjekti, "lattia");
+        kentta.SetTileMethod('t', LuoObjekti, "pallo");
+        kentta.Execute(lattianKoko, lattianKoko);
 
         koiro1 = LuoPelaaja1(koironKoko);
         AddCollisionHandler(koiro1, Tormaa);
@@ -49,7 +56,7 @@ public class CorgiRace : PhysicsGame
         {
             if (kohde.Tag.Equals("pallo"))
             {
-                pelaajan1Pisteet.AddValue(+1);
+                lisaaPisteet(pelaajan1Pisteet);
             }
         }
 
@@ -59,17 +66,25 @@ public class CorgiRace : PhysicsGame
         {
             if (kohde.Tag.Equals("pallo"))
             {
-                pelaajan2Pisteet.AddValue(+1);
+                lisaaPisteet(pelaajan2Pisteet);
             }
         }
-        
-        //if()
 
         Level.CreateBorders();
         Camera.ZoomToLevel();
 
         LisaaLaskurit();
         AsetaOhjaimet();
+    }
+
+
+    /// <summary>
+    /// Lisää pelaajien laskuriin pisteitä
+    /// </summary>
+    /// <param name="pelaaja">mihin laskuriin lisätään</param>
+    public void lisaaPisteet(IntMeter pelaaja)
+    {
+        pelaaja.AddValue(+pisteitäPallosta);
     }
 
 
@@ -94,28 +109,55 @@ public class CorgiRace : PhysicsGame
         AddCollisionHandler(koiro, Tormaa);
         Add(koiro);
         return koiro;
+    }
 
 
-        void Tormaa(PhysicsObject koiro, PhysicsObject kohde)
+    /// <summary>
+    /// Käsittelee törmäyksen. Pelaajan osuessa toiseen pelaajan törmäys synnyttää 
+    /// satunnaisesti koirien ympärille lisää aitaa,
+    /// jotka poistuvat osa kerrallaan ajastinmen mukaan.
+    /// Pelaajan osuessa palloon kerättyjen pallojen yhteislaskuri kasvaa yhdellä
+    /// ja pallo katoaa räjähtäen.
+    /// </summary>
+    /// <param name="koiro"> Törmäävä olio </param>
+    /// <param name="kohde"> Olio, johon törmätään </param>
+    public void Tormaa(PhysicsObject koiro, PhysicsObject kohde)
+    {
+        List<PhysicsObject> lattia =  new List<PhysicsObject>();
+
+        if (kohde.Tag.Equals("pelaaja"))
         {
-            if (kohde.Tag.Equals("pelaaja"))
+            Explosion rajahdys = new Explosion(kohde.Width);
+            rajahdys.Position = kohde.Position;
+            for (int i = 0; i < aitojenMaara; i++)
             {
-                Explosion rajahdys = new Explosion(kohde.Width);
-                rajahdys.Position = kohde.Position;
-                Add(rajahdys);
-                for (int i =0; i==10; i++)
-                {
-                 
-                }
+                Vector sijainti = RandomGen.NextVector(sijaintiMin, sijaintiMax) + koiro.Position;
+                PhysicsObject aita = new PhysicsObject(lattianKoko,lattianKoko);
+                aita.Position = sijainti;
+                aita.Image = LoadImage("lattia");
+                aita.MakeStatic();
+                lattia.Add(aita);
+                Add(aita);
             }
-            if (kohde.Tag.Equals("pallo"))
+            
+            Add(rajahdys);
+
+            Timer poistoAjastin = new Timer();
+            poistoAjastin.Interval = 1;
+            poistoAjastin.Timeout += delegate ()
             {
-                laskuri.AddValue(+1);
-                Explosion rajahdys = new Explosion(kohde.Width);
-                rajahdys.Position = kohde.Position;
-                Add(rajahdys);
-                kohde.Destroy();
-            }
+                PoistaAita(lattia);
+            };
+            poistoAjastin.Start();
+
+        }
+        if (kohde.Tag.Equals("pallo"))
+        {
+            laskuri.AddValue(+1);
+            Explosion rajahdys = new Explosion(kohde.Width);
+            rajahdys.Position = kohde.Position;
+            Add(rajahdys);
+            kohde.Destroy();
         }
     }
 
@@ -123,18 +165,18 @@ public class CorgiRace : PhysicsGame
     /// <summary>
     /// Luo ensimmäisen pelaajan
     /// </summary>
-    /// <param name="koko"></param>
+    /// <param name="koko"> pelaajan koko</param>
     /// <returns>Palauttaa pelaajan, jonka kokoa voi muokata</returns
     private PhysicsObject LuoPelaaja1(double koko)
     {
         return LuoPelaaja(aloitus1, koko, koko, LoadImage("koiro"));
     }
-
-
+  
+  
     /// <summary>
     /// Luo toisen pelaajan
     /// </summary>
-    /// <param name="koko"></param>
+    /// <param name="koko">pelaajan koko</param>
     /// <returns>
     /// Palauttaa pelaajan, jonka kokoa voi muokata</returns>
     private PhysicsObject LuoPelaaja2(double koko)
@@ -144,36 +186,33 @@ public class CorgiRace : PhysicsGame
 
 
     /// <summary>
-    /// Luo kerättäviä palloja pelikentälle
+    /// aliohjelma, joka kertoo ajastimelle missä järjestyksessä koirien törmäyksessä
+    /// syntyneitä aitapaloja poistetaan
     /// </summary>
-    /// <param name="paikka"> pallon paikka kentällä</param>
-    /// <param name="leveys"> pallon leveys</param>
-    /// <param name="korkeus"> pallon korkeus</param>
-    public void LuoPallo(Vector paikka, double leveys, double korkeus)
+    /// <param name="lattia"></param>
+    public void PoistaAita(List<PhysicsObject> lattia)
     {
-        PhysicsObject pallo = new PhysicsObject(leveys, korkeus);
-        pallo.Position = paikka;
-        pallo.Image = LoadImage("pallo");
-        pallo.MakeStatic();
-        pallo.Tag = "pallo";
-        Add(pallo);
+        if (lattia.Count == 0) return;
+        lattia[0].Destroy();
+        lattia.RemoveAt(0);
     }
 
 
     /// <summary>
-    /// Luo pelikentälle lattiapaloja
+    /// Luo objekteja pelikentälle pelikentälle
     /// </summary>
-    /// <param name="paikka"> lattiapalan paikka</param>
-    /// <param name="leveys"> lattiapalan leveys</param>
-    /// <param name="korkeus"> lattiapalan korkeus</param>
-    public void LuoLattia(Vector paikka, double leveys, double korkeus)
+    /// <param name="paikka"> objektin paikka kentällä</param>
+    /// <param name="leveys"> objentin leveys</param>
+    /// <param name="korkeus"> objektin korkeus</param>
+    /// <param name="objekti"></param>
+    public void LuoObjekti(Vector paikka, double leveys, double korkeus, string objekti)
     {
-        PhysicsObject lattia = new PhysicsObject(leveys, korkeus);
-        lattia.Position = paikka;
-        lattia.Image = LoadImage("lattia");
-        lattia.Tag = "lattia";
-        lattia.MakeStatic();
-        Add(lattia);
+        PhysicsObject osa = new PhysicsObject(leveys, korkeus);
+        osa.Position = paikka;
+        osa.Image = LoadImage(objekti);
+        osa.MakeStatic();
+        osa.Tag = objekti;
+        Add(osa);
     }
 
 
@@ -232,14 +271,14 @@ public class CorgiRace : PhysicsGame
     /// </summary>
     void LisaaLaskurit()
     {
-        pelaajan1Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - laskurinKorkeus);
-        pelaajan2Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 13 * laskurinKorkeus);
-        laskuri = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 7 * laskurinKorkeus);
+        pelaajan1Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - laskurinPaikka);
+        pelaajan2Pisteet = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 13 * laskurinPaikka);
+        laskuri = LuoPisteLaskuri(Screen.Left + laskurinPaikka, Screen.Top - 7 * laskurinPaikka);
     }
 
 
     /// <summary>
-    /// Määrittää pistelaskurin. Pistelaskurin maksimiarvo 10, kun se saavutetaan peli päättyy
+    /// Määrittää pistelaskurin. Kun pistelaskurin maksimi saavutetaan, peli päättyy
     /// </summary>
     /// <param name="x"> pistelaskurin x-koordinaatti pelikentällä</param>
     /// <param name="y"> pistelaskurin y-koordinaatti pelikentällä</param>
@@ -269,7 +308,6 @@ public class CorgiRace : PhysicsGame
     /// </summary>
     void PeliLoppui()
     {
-
         ScoreList topLista = new ScoreList(listanPituus, false, listalleMinPisteet);
         topLista = DataStorage.TryLoad<ScoreList>(topLista, "pisteet.xml");
 
@@ -294,7 +332,7 @@ public class CorgiRace : PhysicsGame
 
 
     /// <summary>
-    /// Kertoo pelin lopettavalle aliohjelmalle kumpi pelaajista voittaa. Tasapelissä kumpikaan ei voita.
+    /// Kertoo pelin lopettavalle aliohjelmalle kumpi pelaajista voittaa. 
     /// </summary>
     /// <returns> Palauttaa voittavan pelaajan pisteet kokonaislukuna</returns>
     public int Suurempi()
