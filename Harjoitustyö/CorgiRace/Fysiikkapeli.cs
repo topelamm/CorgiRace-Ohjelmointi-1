@@ -36,6 +36,7 @@ public class CorgiRace : PhysicsGame
     const int lattianKoko = 50;
     const int aitojenMaara = 10;
     const int pisteitäPallosta = 1;
+    const int poistaKohdasta = 0;
     const double sijaintiMin = 500.0;
     const double sijaintiMax = 550.0;
 
@@ -192,9 +193,9 @@ public class CorgiRace : PhysicsGame
     /// <param name="lattia"></param>
     public void PoistaAita(List<PhysicsObject> lattia)
     {
-        if (lattia.Count == 0) return;
-        lattia[0].Destroy();
-        lattia.RemoveAt(0);
+        if (lattia.Count == poistaKohdasta) return;
+        lattia[poistaKohdasta].Destroy();
+        lattia.RemoveAt(poistaKohdasta);
     }
 
 
