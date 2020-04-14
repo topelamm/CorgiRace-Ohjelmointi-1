@@ -42,8 +42,8 @@ public class CorgiRace : PhysicsGame
     public override void Begin()
     {
         LuoKentta();
-        LuoPelaajat();
         LisaaLaskurit();
+        LuoPelaajat();
         AsetaOhjaimet();
     }
 
@@ -142,21 +142,8 @@ public class CorgiRace : PhysicsGame
                 Add(rajahdys);
                 kohde.Destroy();
             }
-           // if (kohde.Tag.Equals("pallo"))
-           // {
-           //     pelaaja.AddValue(+PISTEITAPALLOSTA);
-           // }
+         
         }
-        //LisaaPisteet(pelaaja);
-        // AddCollisionHandler(koiro, Tormaa2);
-        //     void Tormaa2(PhysicsObject koiro, PhysicsObject kohde)
-        //     {
-        //         if (kohde.Tag.Equals("pallo"))
-        //         {
-        //             pelaaja.AddValue(+PISTEITAPALLOSTA);
-        //        // LisaaPisteet(pelaaja);
-        //         }
-        //     }
         Add(koiro);
         return koiro;
     }
@@ -171,47 +158,6 @@ public class CorgiRace : PhysicsGame
     /// </summary>
     /// <param name="koiro"> Törmäävä olio </param>
     /// <param name="kohde"> Olio, johon törmätään </param>
-// public void Tormaa(PhysicsObject koiro, PhysicsObject kohde)
-// {
-//     List<PhysicsObject> lattia =  new List<PhysicsObject>();
-//
-//     if (kohde.Tag.Equals("pelaaja"))
-//     {
-//         Explosion rajahdys = new Explosion(kohde.Width);
-//         rajahdys.Position = kohde.Position;
-//         for (int i = 0; i < AITOJENMAARA; i++)
-//         {
-//             Vector sijainti = RandomGen.NextVector(SIJAINTIMIN, SIJAINTIMAX) + koiro.Position;
-//             PhysicsObject aita = new PhysicsObject(LATTIANKOKO,LATTIANKOKO);
-//             aita.Position = sijainti;
-//             aita.Image = LoadImage("lattia");
-//             aita.MakeStatic();
-//             lattia.Add(aita);
-//             Add(aita);
-//         }
-//         
-//         Add(rajahdys);
-//
-//         Timer poistoAjastin = new Timer();
-//         poistoAjastin.Interval = 1;
-//         poistoAjastin.Timeout += delegate ()
-//         {
-//             PoistaAita(lattia);
-//         };
-//         poistoAjastin.Start();
-//
-//     }
-//     if (kohde.Tag.Equals("pallo"))
-//     {
-//         laskuri.AddValue(+PISTEITAPALLOSTA);
-//      
-//         //pelaaja.AddValue(+PISTEITAPALLOSTA);
-//         Explosion rajahdys = new Explosion(kohde.Width);
-//         rajahdys.Position = kohde.Position;
-//         Add(rajahdys);
-//         kohde.Destroy();
-//     }
-// }
 
 
     /// <summary>
